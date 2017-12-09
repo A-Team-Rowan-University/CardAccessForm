@@ -16,6 +16,7 @@ function onStudentSubmit(event) {
     var phone_number = "";
     var faculty = "";
     var faculty_email = "timothyhollabaugh@gmail.com"; // Should actually be looked up in PersonLookup once completed
+    var citi_training = "";
     var rooms = [];
 
     event.response.getItemResponses().forEach(function (item_response) {
@@ -33,6 +34,9 @@ function onStudentSubmit(event) {
                 break;
             case "Select the rooms that you need access to":
                 rooms = rooms.concat(response);
+                break;
+            case "Citi Training":
+                citi_training = DriveApp.getFileById(response).getUrl();
                 break;
             default:
                 Logger.log("Unknown question: " + item.getTitle());
@@ -67,11 +71,12 @@ function onStudentSubmit(event) {
         + "\n\nFaulty: " + faculty 
         + "\n\nFaulty's Email: " + faculty_email);
         // remember to include Lab Policy
-    
+
     GmailApp.sendEmail(faculty_email, "Student's Card Access Request",
         "Hello " + faculty + ","
         + "\n\nStudent: " + person["First Name"] + " " + person["Last Name"] 
-        + "\n\nRooms: " + rooms_string);
+        + "\n\nRooms: " + rooms_string
+        + "\n\nCiti Training Certificate: " + citi_training);
         // remember to include the Google form link for faulty to approve
 }
 
