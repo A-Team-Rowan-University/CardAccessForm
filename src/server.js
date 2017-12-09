@@ -14,11 +14,14 @@ function onStudentSubmit(event) {
     var person = PersonLookup.lookupPerson("Email", email);
     var phone_number = "";
     var faculty = "";
+    var faculty_email = "timothyhollabaugh@gmail.com"; // Should actually be looked up in PersonLookup once completed
     var rooms = [];
 
     event.response.getItemResponses().forEach(function (item_response) {
         var item = item_response.getItem();
         var response = item_response.getResponse();
+
+        Logger.log(response);
 
         switch (item.getTitle()) {
             case "Phone Number":
@@ -27,25 +30,33 @@ function onStudentSubmit(event) {
             case "Supervising Faculty":
                 faculty = response;
                 break;
-            case "Select the rooms you want access to":
-                rooms.concatenate(response);
+            case "Select the rooms that you need access to":
+                rooms = rooms.concat(response);
                 break;
             default:
                 Logger.log("Unknown question: " + item.getTitle());
         }
     });
 
+    Logger.log(rooms);
+
     var rooms_string = rooms.reduce(function (rooms_string, room) {
-        return rooms_string + room;
-    });
+        if (rooms_string != "") {
+            return rooms_string + ", " + room.replace(" (Requires ECE training and Citi training)", "");
+        } else {
+            return rooms_string + room.replace(" (Requires ECE training and Citi training)", "");
+        }
+    }, "");
 
     requests_sheet.appendRow([
-        email,
         person["First Name"],
         person["Last Name"],
+        email,
         phone_number,
         faculty,
+        faculty_email,
         rooms_string,
     ]);
+
 }
 
