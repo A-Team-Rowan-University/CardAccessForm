@@ -10,6 +10,7 @@ function setup() {
 function onStudentSubmit(event) {
     Logger.log("Form Submitted!");
 
+    var request_id = event.triggerUid;
     var email = event.response.getRespondentEmail();
     var person = PersonLookup.lookupPerson("Email", email);
     var phone_number = "";
@@ -49,6 +50,7 @@ function onStudentSubmit(event) {
     }, "");
 
     requests_sheet.appendRow([
+        request_id,
         person["First Name"],
         person["Last Name"],
         email,
@@ -58,5 +60,18 @@ function onStudentSubmit(event) {
         rooms_string,
     ]);
 
+    GmailApp.sendEmail(email, "Card Access Request", 
+        "Hello " + person["First Name"] + " " + person["Last Name"] + ","
+        + "\n\nYour card access request is currently being proccess with the following information."
+        + "\n\nRooms requested: " + rooms_string 
+        + "\n\nFaulty: " + faculty 
+        + "\n\nFaulty's Email: " + faculty_email);
+        // remember to include Lab Policy
+    
+    GmailApp.sendEmail(faculty_email, "Student's Card Access Request",
+        "Hello " + faculty + ","
+        + "\n\nStudent: " + person["First Name"] + " " + person["Last Name"] 
+        + "\n\nRooms: " + rooms_string);
+        // remember to include the Google form link for faulty to approve
 }
 
