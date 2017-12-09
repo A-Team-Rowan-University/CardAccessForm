@@ -10,7 +10,8 @@ function setup() {
 function onStudentSubmit(event) {
     Logger.log("Form Submitted!");
 
-    var request_id = event.triggerUid;
+
+    var request_id = requests_sheet.getLastRow();
     var email = event.response.getRespondentEmail();
     var person = PersonLookup.lookupPerson("Email", email);
     var phone_number = "";
